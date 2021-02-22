@@ -1,0 +1,35 @@
+version: '2'
+services:
+  jhipstermono20210222-app:
+    image: jhipstermono20210222
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,swagger
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://jhipstermono20210222-postgresql:5432/jhipsterMono20210222
+      - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+      - SPRING_DATA_JEST_URI=http://jhipstermono20210222-elasticsearch:9200
+      - SPRING_ELASTICSEARCH_REST_URIS=http://jhipstermono20210222-elasticsearch:9200
+      - KAFKA_BOOTSTRAPSERVERS=kafka:9092
+      - JAVA_OPTS=-Djgroups.tcp.address=NON_LOOPBACK -Djava.net.preferIPv4Stack=true
+    ports:
+      - 8080:8080
+  jhipstermono20210222-postgresql:
+    extends:
+      file: postgresql.yml
+      service: jhipstermono20210222-postgresql
+  jhipstermono20210222-elasticsearch:
+    extends:
+      file: elasticsearch.yml
+      service: jhipstermono20210222-elasticsearch
+  kafka:
+    extends:
+      file: kafka.yml
+      service: kafka
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+  zookeeper:
+    extends:
+      file: kafka.yml
+      service: zookeeper
